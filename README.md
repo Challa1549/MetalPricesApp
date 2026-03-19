@@ -1,50 +1,45 @@
-# Welcome to your Expo app 👋
+# Metal Prices App 📈
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native application developed with Expo that displays live simulated prices of precious metals (Gold, Silver, Platinum, Palladium) mimicking a premium real-world financial product experience.
 
-## Get started
+## Features ✨
+- **Live Simulated Data**: Utilizes a robust Mock API with independent loading times and realistic simulated price volatility.
+- **Beautiful UI**: Modern, human-centered dark-mode aesthetics using high-quality Unsplash image backgrounds and `expo-linear-gradient`.
+- **Fluid Animations**: Smooth screen transitions and interactive card press animations built with `react-native-reanimated`.
+- **Independent Loading States**: Each metal card handles its own data fetching, loading spinners, and error retries seamlessly.
+- **Detailed Analytics**: Deep dive into daily trends, open/close predictions, and timestamps per asset on a dedicated Details Screen.
 
-1. Install dependencies
+## Getting Started 🚀
 
+### Prerequisites
+- Node.js installed
+- Expo Go app installed on your physical device (iOS/Android), or an iOS Simulator / Android Emulator running locally.
+
+### Installation
+
+1. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+2. Start the development server:
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+3. Scan the QR code shown in your terminal using your iOS/Android camera with the Expo Go app.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Project Structure 📁
+- `src/components`: Reusable UI elements, like the `MetalCard`.
+- `src/screens`: Top-level navigations (`HomeScreen`, `DetailsScreen`).
+- `src/services`: The Mock API (`api.js`) featuring independent fetching constraints and deliberate delays for accurate simulation.
+- `src/navigation`: Application routing built with React Navigation.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Submission Details
+To complete your Github assignment, push this localized repository to your own blank GitHub repo:
 
 ```bash
-npm run reset-project
+git remote add origin <YOUR_GITHUB_REPO_URL>
+git branch -M main
+git push -u origin main
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
