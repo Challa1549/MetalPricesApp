@@ -3,46 +3,42 @@
 const metals = [
   {
     id: 'gold',
-    name: 'Gold',
-    description: 'Gold is a dense, soft, shiny, and highly malleable and ductile metal.',
-    symbol: 'XAU',
-    basePrice: 6000,
-    volatility: 0.005,
-    color: '#FFD700', 
-    gradient: ['#F9A826', '#FFB74D'],
+    name: 'Gold (24K)',
+    description: 'Gold is a highly sought-after precious metal for investment and jewelry in India.',
+    symbol: 'GOLD',
+    basePrice: 7350.50,
+    volatility: 0.003,
+    color: '#F4B400', 
     image: 'https://images.unsplash.com/photo-1610375461246-83df859d849d?auto=format&fit=crop&q=80&w=800'
   },
   {
     id: 'silver',
     name: 'Silver',
-    description: 'Silver is a soft, white, lustrous transition metal.',
-    symbol: 'XAG',
-    basePrice: 75,
+    description: 'Silver is widely used for industrial applications and traditional jewelry.',
+    symbol: 'SILV',
+    basePrice: 91.20,
     volatility: 0.015,
-    color: '#E0E0E0', 
-    gradient: ['#9E9E9E', '#CFD8DC'],
+    color: '#9E9E9E', 
     image: 'https://images.unsplash.com/photo-1598084991519-c90900bc9df0?auto=format&fit=crop&q=80&w=800'
   },
   {
     id: 'platinum',
     name: 'Platinum',
-    description: 'Platinum is a dense, malleable, ductile, highly unreactive, precious, silver-white transition metal.',
-    symbol: 'XPT',
-    basePrice: 2500,
+    description: 'Platinum is a dense, highly unreactive, precious silver-white transition metal.',
+    symbol: 'PLAT',
+    basePrice: 2850.00,
     volatility: 0.008,
-    color: '#E5E4E2',
-    gradient: ['#607D8B', '#B0BEC5'],
+    color: '#607D8B',
     image: 'https://images.unsplash.com/photo-1642427749670-f20e2e76ed8c?auto=format&fit=crop&q=80&w=800'
   },
   {
     id: 'palladium',
     name: 'Palladium',
-    description: 'Palladium is a rare and lustrous silvery-white transition metal.',
-    symbol: 'XPD',
-    basePrice: 3000,
+    description: 'Palladium is essential for catalytic converters and industrial use.',
+    symbol: 'PALL',
+    basePrice: 2600.00,
     volatility: 0.02,
-    color: '#CED0DD',
-    gradient: ['#795548', '#BCAAA4'],
+    color: '#795548',
     image: 'https://images.unsplash.com/photo-1606760227091-306fc6bf4749?auto=format&fit=crop&q=80&w=800'
   }
 ];
@@ -55,19 +51,17 @@ const generatePrice = (base, vol) => {
 export const fetchMetalsList = async () => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(metals.map(({ id, name, symbol, color, gradient, image }) => ({ id, name, symbol, color, gradient, image })));
+      resolve(metals.map(({ id, name, symbol, color, image }) => ({ id, name, symbol, color, image })));
     }, 400); 
   });
 };
 
 export const fetchMetalLiveData = async (metalId) => {
-  // Random delay between 800ms and 2500ms
-  const delay = Math.floor(Math.random() * 1700) + 800;
+  const delay = Math.floor(Math.random() * 1200) + 600;
   
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      // 10% chance to simulate a network error
-      if (Math.random() < 0.1) {
+      if (Math.random() < 0.05) {
         reject(new Error('Network error. Failed to fetch data.'));
         return;
       }
@@ -89,8 +83,8 @@ export const fetchMetalLiveData = async (metalId) => {
         previousClose,
         previousOpen,
         timestamp,
-        currency: 'USD',
-        unit: 'oz'
+        currency: 'INR',
+        unit: 'gram'
       });
     }, delay);
   });

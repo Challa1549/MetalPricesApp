@@ -10,23 +10,24 @@ export default function AppNavigator() {
     <Stack.Navigator 
       initialRouteName="Home"
       screenOptions={{
-        headerStyle: { backgroundColor: '#1A1A1A' },
-        headerTintColor: '#E0E0E0',
-        headerTitleStyle: { fontWeight: '600', fontSize: 20 },
-        contentStyle: { backgroundColor: '#121212' }, // Dark mode base
+        headerStyle: { backgroundColor: '#FFFFFF' },
+        headerTintColor: '#1E1E1E',
+        headerTitleStyle: { fontWeight: '700', fontSize: 20 },
+        contentStyle: { backgroundColor: '#F5F7FA' }, 
+        headerShadowVisible: false,
         animation: 'slide_from_right'
       }}
     >
       <Stack.Screen 
         name="Home" 
         component={HomeScreen} 
-        options={{ title: 'Live Metals', headerLargeTitle: true }} 
+        options={{ title: 'Market Watch' }} 
       />
       <Stack.Screen 
         name="Details" 
         component={DetailsScreen} 
         options={({ route }) => ({ 
-            title: route.params?.metal?.name || 'Details',
+            title: route.params?.metal?.name || 'Overview',
         })} 
       />
     </Stack.Navigator>

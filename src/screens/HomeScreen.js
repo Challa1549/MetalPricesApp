@@ -24,14 +24,13 @@ export default function HomeScreen({ navigation }) {
   };
 
   const handlePressMetal = (metalData) => {
-    // Navigate to DetailsScreen and pass the specific metal's loaded data
     navigation.navigate('Details', { metal: metalData });
   };
 
   if (loadingList) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#FFD700" />
+        <ActivityIndicator size="large" color="#1E1E1E" />
         <Text style={styles.loadingText}>Initializing Market Data...</Text>
       </View>
     );
@@ -58,18 +57,19 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#F5F7FA',
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#121212'
+    backgroundColor: '#F5F7FA'
   },
   loadingText: {
     marginTop: 15,
-    color: '#A0A0A0',
-    fontSize: 16
+    color: '#757575',
+    fontSize: 16,
+    fontWeight: '500'
   },
   listContent: {
     padding: 16,
