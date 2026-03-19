@@ -10,10 +10,10 @@ export default function AppNavigator() {
     <Stack.Navigator 
       initialRouteName="Home"
       screenOptions={{
-        headerStyle: { backgroundColor: '#FFFFFF' },
-        headerTintColor: '#1E1E1E',
+        headerStyle: { backgroundColor: '#1877F2' }, // Facebook Blue
+        headerTintColor: '#FFFFFF',
         headerTitleStyle: { fontWeight: '700', fontSize: 20 },
-        contentStyle: { backgroundColor: '#F5F7FA' }, 
+        contentStyle: { backgroundColor: '#F0F2F5' }, // Facebook Background Gray
         headerShadowVisible: false,
         animation: 'slide_from_right'
       }}
@@ -21,13 +21,13 @@ export default function AppNavigator() {
       <Stack.Screen 
         name="Home" 
         component={HomeScreen} 
-        options={{ title: 'Market Watch' }} 
+        options={{ title: 'Precious Metals on Earth' }} 
       />
       <Stack.Screen 
         name="Details" 
         component={DetailsScreen} 
         options={({ route }) => ({ 
-            title: route.params?.metal?.name || 'Overview',
+            title: route.params?.metal?.name || 'Metal Details',
         })} 
       />
     </Stack.Navigator>

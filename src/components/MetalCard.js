@@ -1,20 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { fetchMetalLiveData } from '../services/api';
-import Animated, { FadeInUp, useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
 export default function MetalCard({ metalInfo, onPress }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-
-  const scale = useSharedValue(1);
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }]
-  }));
-
-  const handlePressIn = () => { scale.value = withSpring(0.96); };
-  const handlePressOut = () => { scale.value = withSpring(1); };
 
   useEffect(() => { loadData(); }, [metalInfo.id]);
 
@@ -35,17 +26,17 @@ export default function MetalCard({ metalInfo, onPress }) {
     if (loading) {
       return (
         <View style={styles.stateContainer}>
-          <ActivityIndicator size="small" color={metalInfo.color} />
-          <Text style={styles.loadingText}>Fetching live price...</Text>
+          <ActivityIndicator size="small" color="#1877F2" />
+          <Text style={styles.loadingText}>Loading price...</Text>
         </View>
       );
     }
     if (error) {
       return (
         <View style={styles.stateContainer}>
-          <Text style={styles.errorText}>Data feed unavailable.</Text>
-          <TouchableOpacity onPress={loadData} style={styles.retryButton}>
-            <Text style={styles.retryText}>Tap to Retry</Text>
+          <Text style={styles.errorText}>Unable to connect.</Text>
+          <TouchableOpacity onPress={loadData}>
+            <Text style={styles.retryText}>Retry</Text>
           </TouchableOpacity>
         </View>
       );
@@ -54,154 +45,155 @@ export default function MetalCard({ metalInfo, onPress }) {
     const diff = data.currentPrice - data.previousClose;
     const isUp = diff >= 0;
     const diffPercent = Math.abs((diff / data.previousClose) * 100).toFixed(2);
-    const priceColor = isUp ? '#00A65A' : '#E53935'; 
+    const priceColor = isUp ? '#00A400' : '#FA383E'; // FB green/red approximations
 
     return (
-      <View style={styles.dataContainer}>
-        <Text style={styles.priceText}>
-          ₹{data.currentPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          <Text style={styles.unitText}> / {data.unit}</Text>
-        </Text>
-        <View style={styles.bottomRow}>
-          <View style={[styles.badge, { backgroundColor: isUp ? '#E8F5E9' : '#FFEBEE' }]}>
-            <Text style={[styles.changeText, { color: priceColor }]}>
-              {isUp ? '▲' : '▼'} ₹{Math.abs(diff).toLocaleString('en-IN', {minimumFractionDigits: 2})} ({diffPercent}%)
-            </Text>
-          </View>
-          <Text style={styles.timeText}>
-            {new Date(data.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+      <View style={styles.postContent}>
+        <View style={styles.priceRow}>
+          <Text style={styles.priceText}>
+            ₹{data.currentPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </Text>
+          <Text style={styles.unitText}> / {data.unit}</Text>
         </View>
+
+        <Text style={[styles.changeText, { color: priceColor }]}>
+          {isUp ? '▲' : '▼'} ₹{Math.abs(diff).toLocaleString('en-IN', {minimumFractionDigits: 2})} ({diffPercent}%) Today
+        </Text>
       </View>
     );
   };
 
   return (
-    <Animated.View entering={FadeInUp.duration(400).delay(150)} style={[styles.cardWrapper, animatedStyle]}>
+    <View style={styles.card}>
       <TouchableOpacity 
-        activeOpacity={1} 
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
+        activeOpacity={0.8} 
         onPress={() => !loading && !error && onPress(data)}
         disabled={loading || error}
       >
-        <View style={[styles.innerCard, { borderLeftColor: metalInfo.color, borderLeftWidth: 4 }]}>
-          <View style={styles.cardHeader}>
-            <View style={styles.titleRow}>
-              <Image source={{ uri: metalInfo.image }} style={styles.metalIcon} />
-              <View>
-                <Text style={styles.title}>{metalInfo.name}</Text>
-                <Text style={styles.symbol}>{metalInfo.symbol}</Text>
-              </View>
-            </View>
+        <View style={styles.postHeader}>
+          <Image source={{ uri: metalInfo.image }} style={styles.avatar} />
+          <View style={styles.headerText}>
+            <Text style={styles.title}>{metalInfo.name}</Text>
+            <Text style={styles.timestamp}>
+              {data && !loading ? new Date(data.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : 'Fetching time...'} • 🌎
+            </Text>
           </View>
-          {renderContent()}
+        </View>
+
+        {renderContent()}
+
+        <View style={styles.divider} />
+        <View style={styles.actionRow}>
+          <TouchableOpacity style={styles.actionButton} onPress={() => !loading && !error && onPress(data)}>
+            <Text style={styles.actionText}>👍 Like</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton} onPress={() => !loading && !error && onPress(data)}>
+            <Text style={styles.actionText}>💬 Comment</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton} onPress={() => !loading && !error && onPress(data)}>
+            <Text style={styles.actionText}>📄 Details</Text>
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
-    </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  cardWrapper: {
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  innerCard: {
+  card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 18,
-    minHeight: 140,
-    justifyContent: 'center',
+    marginBottom: 10,
+    paddingTop: 12,
+    borderWidth: 1,
+    borderColor: '#E4E6EB',
+    borderRadius: 8,
   },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  titleRow: {
+  postHeader: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 10,
   },
-  metalIcon: {
+  avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    marginRight: 12,
+    marginRight: 10,
+    backgroundColor: '#E4E6EB',
+  },
+  headerText: {
+    flex: 1,
   },
   title: {
-    color: '#1E1E1E',
-    fontSize: 18,
-    fontWeight: '700',
+    color: '#050505',
+    fontSize: 16,
+    fontWeight: '600',
   },
-  symbol: {
-    color: '#757575',
+  timestamp: {
+    color: '#65676B',
     fontSize: 13,
-    fontWeight: '500',
     marginTop: 2,
   },
-  stateContainer: {
-    paddingVertical: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingText: {
-    marginTop: 8,
-    color: '#9E9E9E',
-    fontSize: 14,
-  },
-  errorText: {
-    color: '#E53935',
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  retryButton: {
-    backgroundColor: '#F5F5F5',
+  postContent: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingBottom: 12,
   },
-  retryText: {
-    color: '#1E1E1E',
-    fontWeight: '600',
-    fontSize: 13,
-  },
-  dataContainer: {
-    marginTop: 4,
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
   },
   priceText: {
-    color: '#1E1E1E',
+    color: '#050505',
     fontSize: 28,
-    fontWeight: '800',
+    fontWeight: '700',
   },
   unitText: {
     fontSize: 15,
-    color: '#757575',
-    fontWeight: '500',
-  },
-  bottomRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    color: '#65676B',
+    fontWeight: 'normal',
   },
   changeText: {
-    fontSize: 13,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '600',
+    marginTop: 4,
   },
-  timeText: {
-    color: '#9E9E9E',
-    fontSize: 12,
-    fontWeight: '500',
+  stateContainer: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 8,
+    color: '#65676B',
+    fontSize: 14,
+  },
+  errorText: {
+    color: '#FA383E',
+    fontSize: 14,
+  },
+  retryText: {
+    color: '#1877F2',
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E4E6EB',
+    marginHorizontal: 16,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: 8,
+    alignItems: 'center',
+  },
+  actionText: {
+    color: '#65676B',
+    fontSize: 14,
+    fontWeight: '600',
   }
 });

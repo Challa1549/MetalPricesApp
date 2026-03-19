@@ -30,14 +30,18 @@ export default function HomeScreen({ navigation }) {
   if (loadingList) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#1E1E1E" />
-        <Text style={styles.loadingText}>Initializing Market Data...</Text>
+        <ActivityIndicator size="large" color="#1877F2" />
+        <Text style={styles.loadingText}>Fetching markets...</Text>
       </View>
     );
   }
 
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
+      <View style={styles.heroSection}>
+        <Text style={styles.heroTitle}>Market Feed</Text>
+        <Text style={styles.heroSubtitle}>Click to see the prices of precious metals on the earth</Text>
+      </View>
       <FlatList
         data={metals}
         keyExtractor={(item) => item.id}
@@ -57,22 +61,40 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FA',
+    backgroundColor: '#F0F2F5', // Facebook Gray 
+  },
+  heroSection: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    marginBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E4E6EB'
+  },
+  heroTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#050505', // FB Black
+  },
+  heroSubtitle: {
+    fontSize: 14,
+    color: '#65676B', // FB Dark Gray
+    marginTop: 4,
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F7FA'
+    backgroundColor: '#F0F2F5'
   },
   loadingText: {
     marginTop: 15,
-    color: '#757575',
-    fontSize: 16,
+    color: '#65676B',
+    fontSize: 14,
     fontWeight: '500'
   },
   listContent: {
-    padding: 16,
+    paddingHorizontal: 12,
+    paddingTop: 8,
     paddingBottom: 40
   }
 });

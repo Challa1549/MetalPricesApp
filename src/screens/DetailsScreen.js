@@ -1,14 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
 export default function DetailsScreen({ route }) {
   const { metal } = route.params;
 
   const diff = metal.currentPrice - metal.previousClose;
   const isUp = diff >= 0;
-  const priceColor = isUp ? '#00A65A' : '#E53935';
+  const priceColor = isUp ? '#00A400' : '#FA383E';
   const diffPercent = Math.abs((diff / metal.previousClose) * 100).toFixed(2);
   
   const dateObj = new Date(metal.timestamp);
@@ -17,54 +15,61 @@ export default function DetailsScreen({ route }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Animated.View entering={FadeInDown.duration(600)} style={styles.imageContainer}>
-        <Image source={{ uri: metal.image }} style={styles.heroImage} />
-        <LinearGradient 
-          colors={['transparent', '#F5F7FA']} 
-          style={styles.imageGradient} 
-        />
-      </Animated.View>
-
-      <Animated.View entering={FadeInUp.duration(500).delay(200)} style={styles.headerInfo}>
-        <Text style={styles.title}>{metal.name}</Text>
-        <Text style={styles.symbol}>{metal.symbol}</Text>
-      </Animated.View>
-
-      <Animated.View entering={FadeInUp.duration(500).delay(300)} style={styles.priceSection}>
-        <Text style={styles.label}>Live Price</Text>
-        <Text style={styles.currentPrice}>₹{metal.currentPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
-        <View style={[styles.badgeContainer, { backgroundColor: isUp ? '#E8F5E9' : '#FFEBEE' }]}>
-          <Text style={[styles.changeText, { color: priceColor }]}>
-            {isUp ? '▲' : '▼'} ₹{Math.abs(diff).toLocaleString('en-IN', {minimumFractionDigits: 2})} ({diffPercent}%)
-          </Text>
-        </View>
-      </Animated.View>
-
-      <Animated.View entering={FadeInUp.duration(500).delay(400)} style={styles.statsCard}>
-        <Text style={styles.cardTitle}>Market Overview</Text>
-        <View style={styles.statsGrid}>
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>Previous Close</Text>
-            <Text style={styles.statValue}>₹{metal.previousClose.toLocaleString('en-IN', {minimumFractionDigits: 2})}</Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>Previous Open</Text>
-            <Text style={styles.statValue}>₹{metal.previousOpen.toLocaleString('en-IN', {minimumFractionDigits: 2})}</Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>Last Updated</Text>
-            <Text style={styles.statValue}>{dateString}, {timeString}</Text>
+      <View style={styles.postCard}>
+        <View style={styles.postHeader}>
+          <Image source={{ uri: metal.image }} style={styles.avatar} />
+          <View style={styles.headerText}>
+            <Text style={styles.title}>{metal.name}</Text>
+            <Text style={styles.timestamp}>{dateString} at {timeString} • 🌎</Text>
           </View>
         </View>
-      </Animated.View>
+        
+        <View style={styles.description}>
+          <Text style={styles.bodyText}>{metal.description}</Text>
+        </View>
 
-      <Animated.View entering={FadeInUp.duration(500).delay(500)} style={styles.aboutSection}>
-        <Text style={styles.sectionTitle}>About {metal.name}</Text>
-        <Text style={styles.aboutText}>{metal.description}</Text>
-      </Animated.View>
+        <Image source={{ uri: metal.image }} style={styles.largeImage} />
+        
+        <View style={styles.statsContainer}>
+          <View style={styles.mainPriceBlock}>
+            <Text style={styles.priceText}>
+              ₹{metal.currentPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <Text style={styles.unitText}> / gram</Text>
+            </Text>
+            <Text style={[styles.changeText, { color: priceColor }]}>
+              {isUp ? '▲' : '▼'} ₹{Math.abs(diff).toLocaleString('en-IN', {minimumFractionDigits: 2})} ({diffPercent}%)
+            </Text>
+          </View>
+          
+          <View style={styles.divider} />
+          
+          <View style={styles.metricsGrid}>
+            <View style={styles.metric}>
+              <Text style={styles.metricLabel}>Previous Close</Text>
+              <Text style={styles.metricValue}>₹{metal.previousClose.toLocaleString('en-IN', {minimumFractionDigits: 2})}</Text>
+            </View>
+            <View style={styles.metric}>
+              <Text style={styles.metricLabel}>Previous Open</Text>
+              <Text style={styles.metricValue}>₹{metal.previousOpen.toLocaleString('en-IN', {minimumFractionDigits: 2})}</Text>
+            </View>
+            <View style={styles.metric}>
+              <Text style={styles.metricLabel}>Symbol</Text>
+              <Text style={styles.metricValue}>{metal.symbol}</Text>
+            </View>
+            <View style={styles.metric}>
+              <Text style={styles.metricLabel}>Currency</Text>
+              <Text style={styles.metricValue}>{metal.currency}</Text>
+            </View>
+          </View>
+        </View>
 
+        <View style={styles.divider} />
+        <View style={styles.actionRow}>
+          <Text style={styles.actionText}>👍 Like</Text>
+          <Text style={styles.actionText}>💬 Comment</Text>
+          <Text style={styles.actionText}>🔗 Share</Text>
+        </View>
+      </View>
     </ScrollView>
   );
 }
@@ -72,125 +77,113 @@ export default function DetailsScreen({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FA',
+    backgroundColor: '#F0F2F5', // FB background
   },
   content: {
-    paddingBottom: 50,
+    paddingVertical: 10,
   },
-  imageContainer: {
-    height: 280,
-    width: '100%',
-    position: 'relative',
+  postCard: {
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#E4E6EB',
+    paddingVertical: 12,
   },
-  heroImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  imageGradient: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 100,
-  },
-  headerInfo: {
-    paddingHorizontal: 20,
-    marginTop: -30,
+  postHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E4E6EB',
+    marginRight: 10,
+  },
+  headerText: {
+    flex: 1,
   },
   title: {
-    fontSize: 32,
-    color: '#1E1E1E',
-    fontWeight: '800',
-    letterSpacing: 0.5,
-  },
-  symbol: {
+    color: '#050505',
     fontSize: 16,
-    color: '#757575',
-    fontWeight: '600',
-    marginTop: 4,
-  },
-  priceSection: {
-    marginTop: 24,
-    alignItems: 'center',
-  },
-  label: {
-    color: '#757575',
-    fontSize: 14,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 6,
     fontWeight: '600',
   },
-  currentPrice: {
-    fontSize: 42,
-    color: '#1E1E1E',
-    fontWeight: '800',
+  timestamp: {
+    color: '#65676B',
+    fontSize: 13,
+    marginTop: 2,
   },
-  badgeContainer: {
-    marginTop: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
+  description: {
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+  bodyText: {
+    color: '#050505',
+    fontSize: 15,
+    lineHeight: 20,
+  },
+  largeImage: {
+    width: '100%',
+    height: 250,
+    resizeMode: 'cover',
+  },
+  statsContainer: {
+    padding: 16,
+  },
+  mainPriceBlock: {
+    marginBottom: 12,
+  },
+  priceText: {
+    color: '#050505',
+    fontSize: 32,
+    fontWeight: '700',
+  },
+  unitText: {
+    fontSize: 16,
+    color: '#65676B',
+    fontWeight: 'normal',
   },
   changeText: {
     fontSize: 15,
-    fontWeight: '700',
-  },
-  statsCard: {
-    marginTop: 32,
-    marginHorizontal: 20,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1E1E1E',
-    marginBottom: 16,
-  },
-  statsGrid: {
-    width: '100%',
-  },
-  statRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
+    fontWeight: '600',
+    marginTop: 4,
   },
   divider: {
     height: 1,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#E4E6EB',
+    marginHorizontal: 16,
+    marginVertical: 4,
   },
-  statLabel: {
-    color: '#757575',
-    fontSize: 15,
-    fontWeight: '500',
+  metricsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
   },
-  statValue: {
-    color: '#1E1E1E',
+  metric: {
+    width: '50%',
+    paddingVertical: 8,
+  },
+  metricLabel: {
+    color: '#65676B',
+    fontSize: 13,
+    marginBottom: 2,
+  },
+  metricValue: {
+    color: '#050505',
     fontSize: 15,
     fontWeight: '600',
   },
-  aboutSection: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 8,
+    paddingHorizontal: 16,
   },
-  sectionTitle: {
-    color: '#1E1E1E',
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 12,
-  },
-  aboutText: {
-    color: '#616161',
-    fontSize: 16,
-    lineHeight: 24,
+  actionText: {
+    color: '#65676B',
+    fontSize: 14,
+    fontWeight: '600',
   }
 });
