@@ -35,11 +35,3 @@ A React Native application developed with Expo that displays live simulated pric
 - `src/services`: The Mock API (`api.js`) featuring independent fetching constraints and deliberate delays for accurate simulation.
 - `src/navigation`: Application routing built with React Navigation.
 
-## Submission Details
-To complete your Github assignment, push this localized repository to your own blank GitHub repo:
-
-```bash
-git remote add origin <YOUR_GITHUB_REPO_URL>
-git branch -M main
-git push -u origin main
-```
