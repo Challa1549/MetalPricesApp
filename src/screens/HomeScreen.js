@@ -30,17 +30,17 @@ export default function HomeScreen({ navigation }) {
   if (loadingList) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#1877F2" />
-        <Text style={styles.loadingText}>Fetching markets...</Text>
+        <ActivityIndicator size="large" color="#D4AF37" />
+        <Text style={styles.loadingText}>Loading Commodities...</Text>
       </View>
     );
   }
 
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
-      <View style={styles.heroSection}>
-        <Text style={styles.heroTitle}>Market Feed</Text>
-        <Text style={styles.heroSubtitle}>Click to see the prices of precious metals on the earth</Text>
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>Asset Allocation</Text>
+        <Text style={styles.headerSubtitle}>LIVE COMMODITY INDEX</Text>
       </View>
       <FlatList
         data={metals}
@@ -61,40 +61,41 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F2F5', // Facebook Gray 
+    backgroundColor: '#000000',
   },
-  heroSection: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    marginBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E4E6EB'
+  headerContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 20,
   },
-  heroTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#050505', // FB Black
+  headerTitle: {
+    fontSize: 28,
+    color: '#FFFFFF',
+    fontWeight: '300',
+    letterSpacing: 0.5,
   },
-  heroSubtitle: {
-    fontSize: 14,
-    color: '#65676B', // FB Dark Gray
-    marginTop: 4,
+  headerSubtitle: {
+    fontSize: 12,
+    color: '#8A8A8A',
+    fontWeight: '600',
+    letterSpacing: 2,
+    marginTop: 6,
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F0F2F5'
+    backgroundColor: '#000000'
   },
   loadingText: {
     marginTop: 15,
-    color: '#65676B',
-    fontSize: 14,
-    fontWeight: '500'
+    color: '#8A8A8A',
+    fontSize: 12,
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
   },
   listContent: {
-    paddingHorizontal: 12,
-    paddingTop: 8,
+    paddingHorizontal: 16,
     paddingBottom: 40
   }
 });

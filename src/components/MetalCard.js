@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { fetchMetalLiveData } from '../services/api';
+import Animated, { FadeInUp, useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 export default function MetalCard({ metalInfo, onPress }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const scale = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }]
+  }));
+
+  const handlePressIn = () => { scale.value = withTiming(0.98, { duration: 150 }); };
+  const handlePressOut = () => { scale.value = withTiming(1, { duration: 150 }); };
 
   useEffect(() => { loadData(); }, [metalInfo.id]);
 
@@ -26,17 +35,15 @@ export default function MetalCard({ metalInfo, onPress }) {
     if (loading) {
       return (
         <View style={styles.stateContainer}>
-          <ActivityIndicator size="small" color="#1877F2" />
-          <Text style={styles.loadingText}>Loading price...</Text>
+          <ActivityIndicator size="small" color="#D4AF37" />
         </View>
       );
     }
     if (error) {
       return (
         <View style={styles.stateContainer}>
-          <Text style={styles.errorText}>Unable to connect.</Text>
-          <TouchableOpacity onPress={loadData}>
-            <Text style={styles.retryText}>Retry</Text>
+          <TouchableOpacity onPress={loadData} style={styles.retryButton}>
+            <Text style={styles.retryText}>REFRESH</Text>
           </TouchableOpacity>
         </View>
       );
@@ -45,155 +52,130 @@ export default function MetalCard({ metalInfo, onPress }) {
     const diff = data.currentPrice - data.previousClose;
     const isUp = diff >= 0;
     const diffPercent = Math.abs((diff / data.previousClose) * 100).toFixed(2);
-    const priceColor = isUp ? '#00A400' : '#FA383E'; // FB green/red approximations
+    const priceColor = isUp ? '#00E676' : '#FF5252'; 
 
     return (
-      <View style={styles.postContent}>
-        <View style={styles.priceRow}>
-          <Text style={styles.priceText}>
+      <View style={styles.metricsContainer}>
+        <View style={styles.priceColumn}>
+          <Text style={styles.currentPrice}>
             ₹{data.currentPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </Text>
-          <Text style={styles.unitText}> / {data.unit}</Text>
         </View>
-
-        <Text style={[styles.changeText, { color: priceColor }]}>
-          {isUp ? '▲' : '▼'} ₹{Math.abs(diff).toLocaleString('en-IN', {minimumFractionDigits: 2})} ({diffPercent}%) Today
-        </Text>
+        <View style={styles.changeColumn}>
+          <Text style={[styles.changeText, { color: priceColor }]}>
+            {isUp ? '+' : '-'}₹{Math.abs(diff).toLocaleString('en-IN', {minimumFractionDigits: 2})}
+          </Text>
+          <Text style={[styles.percentText, { color: priceColor }]}>
+            {isUp ? '▲' : '▼'} {diffPercent}%
+          </Text>
+        </View>
       </View>
     );
   };
 
   return (
-    <View style={styles.card}>
+    <Animated.View entering={FadeInUp.duration(600).delay(100)} style={[styles.cardWrapper, animatedStyle]}>
       <TouchableOpacity 
-        activeOpacity={0.8} 
+        activeOpacity={0.9} 
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
         onPress={() => !loading && !error && onPress(data)}
         disabled={loading || error}
       >
-        <View style={styles.postHeader}>
-          <Image source={{ uri: metalInfo.image }} style={styles.avatar} />
-          <View style={styles.headerText}>
-            <Text style={styles.title}>{metalInfo.name}</Text>
-            <Text style={styles.timestamp}>
-              {data && !loading ? new Date(data.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : 'Fetching time...'} • 🌎
-            </Text>
+        <View style={styles.card}>
+          <View style={[styles.colorBar, { backgroundColor: metalInfo.color }]} />
+          
+          <View style={styles.cardContent}>
+            <View style={styles.header}>
+              <Text style={styles.title}>{metalInfo.name}</Text>
+              <Text style={styles.symbol}>{metalInfo.symbol}</Text>
+            </View>
+
+            {renderContent()}
           </View>
         </View>
-
-        {renderContent()}
-
-        <View style={styles.divider} />
-        <View style={styles.actionRow}>
-          <TouchableOpacity style={styles.actionButton} onPress={() => !loading && !error && onPress(data)}>
-            <Text style={styles.actionText}>👍 Like</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton} onPress={() => !loading && !error && onPress(data)}>
-            <Text style={styles.actionText}>💬 Comment</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton} onPress={() => !loading && !error && onPress(data)}>
-            <Text style={styles.actionText}>📄 Details</Text>
-          </TouchableOpacity>
-        </View>
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
+  cardWrapper: {
+    marginBottom: 16,
+  },
   card: {
-    backgroundColor: '#FFFFFF',
-    marginBottom: 10,
-    paddingTop: 12,
-    borderWidth: 1,
-    borderColor: '#E4E6EB',
-    borderRadius: 8,
-  },
-  postHeader: {
+    backgroundColor: '#0F0F0F',
+    borderRadius: 12,
     flexDirection: 'row',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#1A1A1A',
+  },
+  colorBar: {
+    width: 4,
+    height: '100%',
+  },
+  cardContent: {
+    flex: 1,
+    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 10,
   },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-    backgroundColor: '#E4E6EB',
-  },
-  headerText: {
+  header: {
     flex: 1,
   },
   title: {
-    color: '#050505',
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '500',
+    letterSpacing: 0.5,
+  },
+  symbol: {
+    color: '#666666',
+    fontSize: 12,
     fontWeight: '600',
-  },
-  timestamp: {
-    color: '#65676B',
-    fontSize: 13,
-    marginTop: 2,
-  },
-  postContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-  },
-  priceRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-  },
-  priceText: {
-    color: '#050505',
-    fontSize: 28,
-    fontWeight: '700',
-  },
-  unitText: {
-    fontSize: 15,
-    color: '#65676B',
-    fontWeight: 'normal',
-  },
-  changeText: {
-    fontSize: 14,
-    fontWeight: '600',
+    letterSpacing: 1,
     marginTop: 4,
   },
   stateContainer: {
-    paddingVertical: 20,
-    alignItems: 'center',
+    flex: 1,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   },
-  loadingText: {
-    marginTop: 8,
-    color: '#65676B',
-    fontSize: 14,
-  },
-  errorText: {
-    color: '#FA383E',
-    fontSize: 14,
+  retryButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: '#1A1A1A',
+    borderRadius: 4,
   },
   retryText: {
-    color: '#1877F2',
-    fontWeight: '600',
+    color: '#D4AF37',
+    fontSize: 10,
+    fontWeight: 'bold',
+    letterSpacing: 1,
+  },
+  metricsContainer: {
+    alignItems: 'flex-end',
+  },
+  currentPrice: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '300',
+    fontVariant: ['tabular-nums'],
+  },
+  changeColumn: {
+    alignItems: 'flex-end',
     marginTop: 4,
   },
-  divider: {
-    height: 1,
-    backgroundColor: '#E4E6EB',
-    marginHorizontal: 16,
+  changeText: {
+    fontSize: 12,
+    fontWeight: '500',
+    fontVariant: ['tabular-nums'],
   },
-  actionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  actionButton: {
-    flex: 1,
-    paddingVertical: 8,
-    alignItems: 'center',
-  },
-  actionText: {
-    color: '#65676B',
-    fontSize: 14,
+  percentText: {
+    fontSize: 11,
     fontWeight: '600',
+    marginTop: 2,
   }
 });
